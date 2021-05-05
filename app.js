@@ -9,7 +9,7 @@ const productRouter = require('./routes/products.routes.js');
 
 // to open requests from around
 app.use(cors())
-
+app.use(express.static('public'))
 initialiseDbConnection();
 
 app.use('/products', productRouter);
