@@ -1,15 +1,23 @@
-// create an express app
-const express = require("express")
-const app = express()
+const express = require('express');
+const app = express();
+const cors = require('cors');
+const port = 3000;
 
-// use the express-static middleware
-app.use(express.static("public"))
+const { initialiseDbConnection } = require('./db/connect.db.js');
 
-// define the first route
-app.get("/", function (req, res) {
-  res.send("<h1>Pong</h1>")
-})
+const productRouter = require('./routes/products.routes.js');
 
-// start the server listening for requests
-app.listen(process.env.PORT || 3000, 
-	() => console.log("Server is running..."));
+// to open requests from around
+app.use(cors())
+
+initialiseDbConnection();
+
+app.use('/products', productRouter);
+
+app.get('/', (req, res) => {
+  res.json({ 'Hello From Farmers Grocery!': 'API' })
+});
+
+app.listen(port, () => {
+  console.log(`server started at port ${port}`);
+});
