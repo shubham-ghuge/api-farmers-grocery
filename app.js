@@ -18,6 +18,10 @@ app.get('/', (req, res) => {
   res.json({ 'Hello From Farmers Grocery!': 'API' })
 });
 
+app.use((req, res, next) => {
+  res.status(404).json({ success: false, message: "Invalid Route" });
+})
+
 app.listen(port, () => {
   console.log(`server started at port ${port}`);
 });
