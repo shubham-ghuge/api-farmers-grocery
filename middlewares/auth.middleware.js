@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const { errorHandler } = require('../utils');
 
 const authHandler = async (req, res, next) => {
-    const token = req.headers.autherization;
+    const token = req.headers.authorization;
     try {
         const decoded = jwt.verify(token, process.env.secret_key);
         req.user = { userId: decoded.userId };
