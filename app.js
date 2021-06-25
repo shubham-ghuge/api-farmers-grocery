@@ -1,17 +1,18 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const bodyParser = require('body-parser');
 const port = 3000;
-
 const { initialiseDbConnection } = require('./db/connect.db.js');
+const productRouter = require('./routes/product.route');
+const customerRouter = require('./routes/customer.route');
 
-const productRouter = require('./routes/products.routes.js');
-
-// to open requests from around
+app.use(bodyParser.json());
 app.use(cors())
 app.use(express.static('public'))
 initialiseDbConnection();
 
+app.use('/customers', customerRouter);
 app.use('/products', productRouter);
 
 app.get('/', (req, res) => {
