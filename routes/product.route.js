@@ -4,8 +4,8 @@ const { extend } = require('lodash');
 const Category = require('../models/category.model');
 const Farmer = require('../models/farmer.model');
 const Product = require('../models/product.model');
-const { authHandler } = require('../middlewares/auth.middleware');
-const { isFarmer, getProductById } = require('../middlewares/product.middleware');
+const { authHandler, isFarmer } = require('../middlewares/auth.middleware');
+const { getProductById } = require('../middlewares/product.middleware');
 const { errorHandler } = require('../utils');
 
 router.route('/')

@@ -1,22 +1,5 @@
-const Farmer = require("../models/farmer.model");
-const express = require('express');
-const router = express.Router();
 const { errorHandler } = require("../utils");
 const Product = require("../models/product.model");
-
-const isFarmer = async (req, res, next) => {
-    const { userId } = req.user;
-    try {
-        const checkfarmer = await Farmer.findById(userId);
-        if (checkfarmer) {
-            return next();
-        } else {
-            res.json({ success: false, message: "unauthorized access" });
-        }
-    } catch (error) {
-        errorHandler(error, "unauthorized access", 412);
-    }
-}
 
 const getProductById = async (req, res, next, id) => {
     try {
@@ -33,4 +16,4 @@ const getProductById = async (req, res, next, id) => {
     }
 }
 
-module.exports = { isFarmer, getProductById }
+module.exports = {  getProductById }

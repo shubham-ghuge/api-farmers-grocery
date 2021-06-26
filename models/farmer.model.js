@@ -1,12 +1,23 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const farmerProduct = new Schema({
+const farmerProductSchema = new Schema({
     productId: {
         type: Schema.Types.ObjectId,
         ref: 'Product'
     },
     isInStock: Boolean
+})
+
+const farmerOrderSchema = new Schema({
+    customerId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Customer'
+    },
+    productId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Product'
+    }
 })
 
 const farmerSchema = new Schema({
@@ -20,7 +31,8 @@ const farmerSchema = new Schema({
         type: String,
         required: true
     },
-    products: [farmerProduct]
+    products: [farmerProductSchema],
+    orders: [farmerOrderSchema]
 });
 const Farmer = mongoose.model('Farmer', farmerSchema);
 module.exports = Farmer;

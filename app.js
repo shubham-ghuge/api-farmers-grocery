@@ -7,6 +7,7 @@ const { initialiseDbConnection } = require('./db/connect.db.js');
 const productRouter = require('./routes/product.route');
 const customerRouter = require('./routes/customer.route');
 const farmerRoute = require('./routes/farmer.route');
+const orderRoute = require('./routes/order.route');
 require('dotenv').config();
 
 app.use(bodyParser.json());
@@ -17,6 +18,7 @@ initialiseDbConnection();
 app.use('/customers', customerRouter);
 app.use('/farmers', farmerRoute);
 app.use('/products', productRouter);
+app.use('/orders', orderRoute);
 
 app.get('/', (req, res) => {
   res.json({ 'Hello From Farmers Grocery!': 'API' })
