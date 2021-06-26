@@ -1,4 +1,3 @@
-const { errorHandler } = require("../utils");
 const Product = require("../models/product.model");
 
 const getProductById = async (req, res, next, id) => {
@@ -12,8 +11,9 @@ const getProductById = async (req, res, next, id) => {
             next();
         }
     } catch (error) {
-        errorHandler(error, "could not retrieve product", 400)
+        console.log(error)
+        res.status(412).json({ success: false, message: "could not retrieve product" });
     }
 }
 
-module.exports = {  getProductById }
+module.exports = { getProductById }

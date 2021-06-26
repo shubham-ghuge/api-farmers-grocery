@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const Order = require('../models/orders.model');
-const { errorHandler } = require('../utils');
 const { authHandler, isCustomer } = require('../middlewares/auth.middleware');
+const { checkFarmer } = require('../middlewares/order.middleware');
+const Farmer = require('../models/farmer.model');
 
 router.route('/')
     .get(authHandler, isCustomer, async (req, res) => {
@@ -11,7 +12,8 @@ router.route('/')
             const response = await Order.findOne({ customerId: userId }).populate('products.productId').exec();
             res.json({ success: true, response });
         } catch (error) {
-            errorHandler(error, "can't retrieve orders at this moment", 400);
+            console.log(error);
+            res.status(412).json({ success: false, message: "can't retrieve orders at this moment" });
         }
     })
     .post(authHandler, isCustomer, async (req, res) => {
@@ -27,7 +29,22 @@ router.route('/')
                 res.json({ success: true, message: 'order successfully placed' });
             }
         } catch (error) {
-            errorHandler(error, "can't place order, try again", 400)
+            console.log(error);
+            res.status(412).json({ success: false, message: "can't place order, try again" })
+        }
+    })
+
+router.param('farmerId', checkFarmer);
+router.route('/:farmerId')
+    .post(authHandler, isCustomer, async (req, res) => {
+        const { userId } = req.user;
+        const { farmerId } = req.params;
+        try {
+            const response = await Farmer.findByIdAndUpdate({ _id: farmerId }, { $push: { customers: userId } });
+            res.json({ success: true, response });
+        } catch (error) {
+            console.log(error);
+            res.status(412).json({ success: false, message: "error while placing order" })
         }
     })
 

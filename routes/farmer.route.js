@@ -1,9 +1,9 @@
 const express = require('express');
 const { isFarmer, authHandler } = require('../middlewares/auth.middleware');
 const Farmer = require('../models/farmer.model');
+const Order = require('../models/orders.model');
 const router = express.Router();
 const { registerUser, loginUser } = require('../services/auth.service');
-const { errorHandler } = require('../utils');
 
 router.route('/register')
     .post(async (req, res) => {
@@ -13,24 +13,26 @@ router.route('/login')
     .post(async (req, res) => {
         loginUser(req, res, Farmer);
     })
+
 router.route('/order')
     .get(authHandler, isFarmer, async (req, res) => {
         const { userId } = req.user;
         try {
-            const response = await Farmer.findById(userId).populate('orders.customerId').populate('orders.productId').exec();
-            res.json({ success: true, response });
+            const { customers } = await Farmer.findById(userId);
+            if (customers.length !== 0) {
+                const response = []
+                for (let i = 0; i < customers.length; i++) {
+                    const data = await Order.findOne({ customerId: customers[i] }).populate('customerId products.productId').exec();
+                    response.push(data);
+                }
+                console.log(response);
+                res.json({ success: true, response });
+            } else {
+                res.json({ success: true, message: 'no orders found' })
+            }
         } catch (error) {
-            errorHandler(error, "error while retrieving order details", 409);
-        }
-    })
-    .post(authHandler, isFarmer, async (req, res) => {
-        const { userId } = req.user;
-        const { orderDetails } = req.body;
-        try {
-            const response = await Farmer.findOneAndUpdate({ _id: userId }, { $push: { orders: orderDetails } });
-            res.json({ success: true, response });
-        } catch (error) {
-            errorHandler(error, "error while placing an order", 500);
+            console.log(error);
+            res.status(412).json({ success: false, message: "error while retrieving order details" });
         }
     })
 

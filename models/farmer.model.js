@@ -9,16 +9,6 @@ const farmerProductSchema = new Schema({
     isInStock: Boolean
 })
 
-const farmerOrderSchema = new Schema({
-    customerId: {
-        type: Schema.Types.ObjectId,
-        ref: 'Customer'
-    },
-    productId: {
-        type: Schema.Types.ObjectId,
-        ref: 'Product'
-    }
-})
 
 const farmerSchema = new Schema({
     name: String,
@@ -32,7 +22,10 @@ const farmerSchema = new Schema({
         required: true
     },
     products: [farmerProductSchema],
-    orders: [farmerOrderSchema]
+    customers: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Customer'
+    }]
 });
 const Farmer = mongoose.model('Farmer', farmerSchema);
 module.exports = Farmer;

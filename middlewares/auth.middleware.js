@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const { errorHandler } = require('../utils');
 const Farmer = require("../models/farmer.model");
 const Customer = require('../models/customer.model');
 
@@ -10,7 +9,8 @@ const authHandler = async (req, res, next) => {
         req.user = { userId: decoded.userId };
         return next();
     } catch (error) {
-        errorHandler(error, "unauthorized access please add the token", 401);
+        console.log(error);
+        res.status(412).json({ success: false, message: "unauthorized access please add the token" });
     }
 }
 
@@ -24,7 +24,8 @@ const isFarmer = async (req, res, next) => {
             res.status(401).json({ success: false, message: "unauthorized access" });
         }
     } catch (error) {
-        errorHandler(error, "unauthorized access", 401);
+        console.log(error);
+        res.status(412).json({ success: false, message: "unauthorized access" });
     }
 }
 
@@ -39,7 +40,8 @@ const isCustomer = async (req, res, next) => {
             res.status(401).json({ success: false, message: "unauthorized access" });
         }
     } catch (error) {
-        errorHandler(error, "unauthorized access", 401);
+        console.log(error);
+        res.status(412).json({ success: false, message: "unauthorized access" });
     }
 }
 

@@ -6,7 +6,6 @@ const Farmer = require('../models/farmer.model');
 const Product = require('../models/product.model');
 const { authHandler, isFarmer } = require('../middlewares/auth.middleware');
 const { getProductById } = require('../middlewares/product.middleware');
-const { errorHandler } = require('../utils');
 
 router.route('/')
   .get(async (req, res) => {
@@ -23,10 +22,31 @@ router.route('/')
       res.json({ success: true, message: "product added" });
     }
     catch (error) {
-      errorHandler(error, "error while adding product in db", 412)
+      console.log(error);
+      res.status(412).json({ success: false, message: "error while adding product in db" })
     }
   });
 
+router.route('/category')
+  .get(async (req, res) => {
+    try {
+      const response = await Category.find({});
+      res.status(201).json({ success: true, response });
+    } catch (error) {
+      console.log(error);
+      res.status(412).json({ success: false, message: "no categories found" });
+    }
+  })
+  .post(authHandler, isFarmer, async (req, res) => {
+    const { name } = req.body;
+    try {
+      const response = await Category.create({ name });
+      res.status(201).json({ success: true, message: "category added" });
+    } catch (error) {
+      console.log(error);
+      res.status(412).json({ success: false, message: "error while inserting category" });
+    }
+  });
 
 router.param('productId', getProductById)
 
@@ -43,7 +63,8 @@ router.route('/:productId')
       const response = await product.save()
       res.status(201).json({ success: true, message: "product updated", response });
     } catch (error) {
-      errorHandler(error, "error while updating the product data", 409);
+      console.log(error);
+      res.status(412).json({ success: false, message: "error while updating the product data" });
     }
   })
   .delete(authHandler, isFarmer, async (req, res) => {
@@ -53,19 +74,5 @@ router.route('/:productId')
     res.status(201).json({ success: true, product });
   });
 
-router.route('/category')
-  .get(async (req, res) => {
-    const response = await Category.find({});
-    res.status(201).json({ success: true, response });
-  })
-  .post(authHandler, isFarmer, async (req, res) => {
-    const { name } = req.body;
-    try {
-      const response = await Category.create({ name });
-      res.status(201).json({ success: true, message: "category added" });
-    } catch (error) {
-      errorHandler(error, "error while inserting category", 412);
-    }
-  });
 
 module.exports = router;

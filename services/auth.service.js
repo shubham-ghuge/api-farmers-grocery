@@ -1,12 +1,11 @@
-const { errorHandler } = require('../utils');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const salt = bcrypt.genSaltSync(8);
 
 const registerUser = async (req, res, model) => {
     const { name, email, password } = req.body;
-    try {
-        if (name && email && password) {
+    if (name && email && password) {
+        try {
             const checkEmail = await model.findOne({ email })
             if (!checkEmail) {
                 const hashedPassword = bcrypt.hashSync(password, salt);
@@ -17,12 +16,14 @@ const registerUser = async (req, res, model) => {
                 res.json({ success: false, message: "email id already exist" })
             }
         }
-        else {
-            res.json({ success: false, message: 'insufficient data' })
-        }
 
-    } catch (error) {
-        errorHandler(error, 'error while registration in', 412);
+        catch (error) {
+            console.log(error);
+            res.status(412).json({ success: false, message: 'error while registration in' });
+        }
+    }
+    else {
+        res.json({ success: false, message: 'insufficient data' })
     }
 }
 
@@ -43,7 +44,8 @@ const loginUser = async (req, res, model) => {
                 res.json({ success: false, message: "User Not Found, please register" });
             }
         } catch (error) {
-            errorHandler(error, "error while logging in", 412)
+            console.log(error);
+            res.status(412).json({ success: false, message: "error while logging in" })
         }
     } else {
         res.status(412).json({ success: false, message: "insufficient data" })
