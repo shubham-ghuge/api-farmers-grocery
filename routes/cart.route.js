@@ -40,7 +40,7 @@ router.route('/')
         const { userId } = req.user;
         const { productId } = req.body;
         try {
-            const response = await Cart.findOneAndUpdate({ customerId: userId }, { $pull: { products: { productId: productId } } });
+            const response = await Cart.findOneAndRemove({ customerId: userId }, { $pull: { products: { productId } } }).exec();
             res.json({ success: true, response });
         } catch (error) {
             console.log(error);
