@@ -25,7 +25,6 @@ router.route('/order')
                     const data = await Order.findOne({ customerId: customers[i] }).populate('customerId products.productId').exec();
                     response.push(data);
                 }
-                console.log(response);
                 res.json({ success: true, response });
             } else {
                 res.json({ success: true, message: 'no orders found' })
