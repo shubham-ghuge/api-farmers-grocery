@@ -40,8 +40,8 @@ router.route('/')
         const { userId } = req.user;
         const { productId } = req.body;
         try {
-            const response = await Wishlist.findOneAndUpdate({ customerId: userId }, { $pull: { products: productId } });
-            res.json({ success: true, message: "removed product from wishlist", response });
+            await Wishlist.findOneAndUpdate({ customerId: userId }, { $pull: { products: productId } });
+            res.json({ success: true, message: "product removed from wishlist"});
         } catch (error) {
             console.log(error);
             res.json({ success: false, message: "can't remove data from wishlist" });

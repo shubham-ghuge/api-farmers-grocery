@@ -21,14 +21,14 @@ router.route('/')
             if (isExistingUser) {
                 const isExistingProduct = await Cart.find({ products: { $elemMatch: { productId: productDetails.productId } } });
                 if (isExistingProduct.length !== 0) {
-                    const response = await Cart.findOneAndUpdate({ customerId: userId }, { $set: { products: productDetails } }, { new: true });
-                    res.json({ success: true, message: "quantity updated", response });
+                    await Cart.updateOne({ customerId: userId, products: { $elemMatch: { productId: productDetails.productId } } }, { $set: { "products.$.quantity": productDetails.quantity } });
+                    res.json({ success: true, message: "quantity updated" });
                 } else {
-                    const response = await Cart.findOneAndUpdate({ customerId: userId }, { $push: { products: productDetails } });
-                    res.json({ success: true, message: "product added to cart", response });
+                    await Cart.findOneAndUpdate({ customerId: userId }, { $push: { products: productDetails } });
+                    res.json({ success: true, message: "product added to cart" });
                 }
             } else {
-                const response = await Cart.create({ customerId: userId, products: [productDetails] });
+                await Cart.create({ customerId: userId, products: [productDetails] });
                 res.json({ success: true, message: "product added to cart" });
             }
         } catch (error) {
@@ -40,8 +40,8 @@ router.route('/')
         const { userId } = req.user;
         const { productId } = req.body;
         try {
-            const response = await Cart.findOneAndRemove({ customerId: userId }, { $pull: { products: { productId } } }).exec();
-            res.json({ success: true, response });
+            await Cart.findOneAndUpdate({ customerId: userId }, { $pull: { products: { productId } } }).exec();
+            res.json({ success: true, message: "product removed from cart" });
         } catch (error) {
             console.log(error);
             res.json({ success: false, message: "error in deleting products from cart" });

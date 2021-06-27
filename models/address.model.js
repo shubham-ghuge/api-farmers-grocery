@@ -7,7 +7,7 @@ const addressSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Customer'
     },
-    address: String
+    address: [String]
 });
 const Address = mongoose.model('Address', addressSchema);
 module.exports = Address;
