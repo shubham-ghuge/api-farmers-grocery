@@ -10,7 +10,7 @@ const { getProductById } = require('../middlewares/product.middleware');
 router.route('/')
   .get(async (req, res) => {
     const response = await Product.find({}).lean();
-    res.json({ status: true, response });
+    res.status(200).json({ status: true, response });
   })
   .post(authHandler, isFarmer, async (req, res) => {
     const { userId } = req.user;
@@ -19,11 +19,11 @@ router.route('/')
     try {
       const product = await Product.create(data);
       await Farmer.findOneAndUpdate({ _id: userId }, { $push: { products: { productId: product._id, isInStock: true } } }).exec();
-      res.json({ success: true, message: "product added" });
+      res.status(201).json({ success: true, message: "product added" });
     }
     catch (error) {
       console.log(error);
-      res.status(412).json({ success: false, message: "error while adding product in db" })
+      res.status(409).json({ success: false, message: "error while adding product in db" })
     }
   });
 
@@ -31,10 +31,10 @@ router.route('/category')
   .get(async (req, res) => {
     try {
       const response = await Category.find({});
-      res.status(201).json({ success: true, response });
+      res.status(200).json({ success: true, response });
     } catch (error) {
       console.log(error);
-      res.status(412).json({ success: false, message: "no categories found" });
+      res.status(409).json({ success: false, message: "can't retrieve categories" });
     }
   })
   .post(authHandler, isFarmer, async (req, res) => {
@@ -44,7 +44,7 @@ router.route('/category')
       res.status(201).json({ success: true, message: "category added" });
     } catch (error) {
       console.log(error);
-      res.status(412).json({ success: false, message: "error while inserting category" });
+      res.status(409).json({ success: false, message: "error while inserting category" });
     }
   });
 
@@ -53,7 +53,7 @@ router.param('productId', getProductById)
 router.route('/:productId')
   .get(async (req, res) => {
     const response = req.product;
-    res.status(201).json({ success: true, response });
+    res.status(200).json({ success: true, response });
   })
   .post(authHandler, isFarmer, async (req, res) => {
     const updatedProduct = req.body;
@@ -64,7 +64,7 @@ router.route('/:productId')
       res.status(201).json({ success: true, message: "product updated", response });
     } catch (error) {
       console.log(error);
-      res.status(412).json({ success: false, message: "error while updating the product data" });
+      res.status(409).json({ success: false, message: "error while updating the product data" });
     }
   })
   .delete(authHandler, isFarmer, async (req, res) => {

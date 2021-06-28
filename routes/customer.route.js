@@ -21,7 +21,7 @@ router.route('/address')
             res.status(201).json({ success: true, response });
         } catch (error) {
             console.log(error);
-            res.json({ success: false, message: "can't retrieve address" });
+            res.status(409).json({ success: false, message: "can't retrieve address" });
         }
     })
     .post(authHandler, isCustomer, async (req, res) => {
@@ -38,7 +38,7 @@ router.route('/address')
             }
         } catch (error) {
             console.log(error);
-            res.json({ success: false, message: "can't retrieve address" });
+            res.status(409).json({ success: false, message: "can't retrieve address" });
         }
     })
     .delete(authHandler, isCustomer, async (req, res) => {
@@ -46,10 +46,10 @@ router.route('/address')
         const { addressData } = req.body;
         try {
             await Address.findOneAndUpdate({ customerId: userId }, { $pull: { address: addressData } });
-            res.json({ success: true, message: "address deleted" });
+            res.status(201).json({ success: true, message: "address deleted" });
         } catch (error) {
             console.log(error);
-            res.json({ success: false, message: "can't remove address" });
+            res.status(409).json({ success: false, message: "can't remove address" });
         }
     })
 module.exports = router;

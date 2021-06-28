@@ -9,8 +9,8 @@ const registerUser = async (req, res, model) => {
             const checkEmail = await model.findOne({ email })
             if (!checkEmail) {
                 const hashedPassword = bcrypt.hashSync(password, salt);
-                const response = await model.create({ name, email, password: hashedPassword });
-                res.status(401).json({ success: true, message: 'successfully registered' });
+                await model.create({ name, email, password: hashedPassword });
+                res.status(201).json({ success: true, message: 'successfully registered' });
             }
             else {
                 res.json({ success: false, message: "email id already exist" })
@@ -19,11 +19,11 @@ const registerUser = async (req, res, model) => {
 
         catch (error) {
             console.log(error);
-            res.status(412).json({ success: false, message: 'error while registration in' });
+            res.status(409).json({ success: false, message: 'error while registration in' });
         }
     }
     else {
-        res.json({ success: false, message: 'insufficient data' })
+        res.status(412).json({ success: false, message: 'insufficient data' })
     }
 }
 
@@ -36,16 +36,16 @@ const loginUser = async (req, res, model) => {
                 const checkPassword = bcrypt.compareSync(password, user.password);
                 if (checkPassword) {
                     const token = jwt.sign({ userId: user._id }, process.env.secret_key, { expiresIn: '24h' });
-                    res.status(200).json({ success: true, message: "login successful", token, user: user.name })
+                    res.status(201).json({ success: true, message: "login successful", token, user: user.name })
                 } else {
                     res.status(409).json({ success: false, message: "Invalid credentials" })
                 }
             } else {
-                res.json({ success: false, message: "User Not Found, please register" });
+                res.status(401).json({ success: false, message: "User Not Found, please register" });
             }
         } catch (error) {
             console.log(error);
-            res.status(412).json({ success: false, message: "error while logging in" })
+            res.status(401).json({ success: false, message: "error while logging in" })
         }
     } else {
         res.status(412).json({ success: false, message: "insufficient data" })

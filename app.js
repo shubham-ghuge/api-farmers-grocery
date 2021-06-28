@@ -26,7 +26,7 @@ app.use('/cart', cartRoute);
 app.use('/wishlist', wishlistRoute);
 
 app.get('/', (req, res) => {
-  res.json({ 'Hello From Farmers Grocery!': 'API' })
+  res.status(200).json({ 'Hello From Farmers Grocery!': 'API' })
 });
 
 app.use((req, res, next) => {

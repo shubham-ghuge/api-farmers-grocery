@@ -10,7 +10,7 @@ const authHandler = async (req, res, next) => {
         return next();
     } catch (error) {
         console.log(error);
-        res.status(412).json({ success: false, message: "unauthorized access please add the token" });
+        res.status(401).json({ success: false, message: "unauthorized access please add the token" });
     }
 }
 
@@ -25,7 +25,7 @@ const isFarmer = async (req, res, next) => {
         }
     } catch (error) {
         console.log(error);
-        res.status(412).json({ success: false, message: "unauthorized access" });
+        res.status(401).json({ success: false, message: "unauthorized access" });
     }
 }
 
@@ -41,7 +41,7 @@ const isCustomer = async (req, res, next) => {
         }
     } catch (error) {
         console.log(error);
-        res.status(412).json({ success: false, message: "unauthorized access" });
+        res.status(401).json({ success: false, message: "unauthorized access" });
     }
 }
 

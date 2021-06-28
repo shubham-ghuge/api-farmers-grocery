@@ -8,10 +8,10 @@ router.route('/')
         const { userId } = req.user;
         try {
             const response = await Wishlist.findOne({ customerId: userId }).populate('products').exec();
-            res.status(201).json({ success: true, response });
+            res.status(200).json({ success: true, response });
         } catch (error) {
             console.log(error);
-            res.json({ success: false, message: "can't retrieve wishlist data" });
+            res.status(409).json({ success: false, message: "can't retrieve wishlist data" });
         }
     })
     .post(authHandler, isCustomer, async (req, res) => {
@@ -22,7 +22,7 @@ router.route('/')
             if (isExistingUser) {
                 const { products } = isExistingUser;
                 if (products.includes(productId)) {
-                    res.json({ success: true, message: "product already exist" });
+                    res.status(409).json({ success: true, message: "product already exist" });
                 } else {
                     await Wishlist.findOneAndUpdate({ customerId: userId }, { $push: { products: productId } })
                     res.status(201).json({ success: true, message: "product added in wishlist" });
@@ -33,7 +33,7 @@ router.route('/')
             }
         } catch (error) {
             console.log(error);
-            res.json({ success: false, message: "can't add data in wishlist" });
+            res.status(409).json({ success: false, message: "can't add data in wishlist" });
         }
     })
     .delete(authHandler, isCustomer, async (req, res) => {
@@ -41,10 +41,10 @@ router.route('/')
         const { productId } = req.body;
         try {
             await Wishlist.findOneAndUpdate({ customerId: userId }, { $pull: { products: productId } });
-            res.json({ success: true, message: "product removed from wishlist"});
+            res.status(201).json({ success: true, message: "product removed from wishlist"});
         } catch (error) {
             console.log(error);
-            res.json({ success: false, message: "can't remove data from wishlist" });
+            res.status(409).json({ success: false, message: "can't remove data from wishlist" });
         }
     })
 module.exports = router;

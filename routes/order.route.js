@@ -10,10 +10,10 @@ router.route('/')
         const { userId } = req.user;
         try {
             const response = await Order.findOne({ customerId: userId }).populate('products.productId').exec();
-            res.json({ success: true, response });
+            res.status(200).json({ success: true, response });
         } catch (error) {
             console.log(error);
-            res.status(412).json({ success: false, message: "can't retrieve orders at this moment" });
+            res.status(409).json({ success: false, message: "can't retrieve orders at this moment" });
         }
     })
     .post(authHandler, isCustomer, async (req, res) => {
@@ -22,15 +22,15 @@ router.route('/')
         try {
             const isExistingUser = await Order.findOne({ customerId: userId })
             if (!isExistingUser) {
-                const response = await Order.create({ customerId: userId, products });
+                await Order.create({ customerId: userId, products });
                 res.status(201).json({ success: true, message: 'order successfully placed' });
             } else {
-                const response = await Order.findOneAndUpdate({ customerId: userId }, { $push: { products } });
-                res.json({ success: true, message: 'order successfully placed' });
+                await Order.findOneAndUpdate({ customerId: userId }, { $push: { products } });
+                res.status(201).json({ success: true, message: 'order successfully placed' });
             }
         } catch (error) {
             console.log(error);
-            res.status(412).json({ success: false, message: "can't place order, try again" })
+            res.status(409).json({ success: false, message: "can't place order, try again" })
         }
     })
 
@@ -41,10 +41,10 @@ router.route('/:farmerId')
         const { farmerId } = req.params;
         try {
             const response = await Farmer.findByIdAndUpdate({ _id: farmerId }, { $push: { customers: userId } });
-            res.json({ success: true, response });
+            res.status(201).json({ success: true, response });
         } catch (error) {
             console.log(error);
-            res.status(412).json({ success: false, message: "error while placing order" })
+            res.status(409).json({ success: false, message: "error while placing order" })
         }
     })
 

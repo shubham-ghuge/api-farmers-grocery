@@ -1,6 +1,7 @@
 const express = require('express');
 const { isFarmer, authHandler } = require('../middlewares/auth.middleware');
 const Farmer = require('../models/farmer.model');
+const Product = require('../models/product.model');
 const Order = require('../models/orders.model');
 const router = express.Router();
 const { registerUser, loginUser } = require('../services/auth.service');
@@ -13,7 +14,17 @@ router.route('/login')
     .post(async (req, res) => {
         loginUser(req, res, Farmer);
     })
-
+router.route('/products')
+    .get(authHandler, isFarmer, async (req, res) => {
+        const { userId } = req.user;
+        try {
+            const response = await Product.find({ farmerId: userId })
+            res.status(200).json({ success: true, response });
+        } catch (error) {
+            console.log(error);
+            res.status(409).json({ success: false, message: "can't retrieve products" });
+        }
+    })
 router.route('/order')
     .get(authHandler, isFarmer, async (req, res) => {
         const { userId } = req.user;
@@ -25,13 +36,13 @@ router.route('/order')
                     const data = await Order.findOne({ customerId: customers[i] }).populate('customerId products.productId').exec();
                     response.push(data);
                 }
-                res.json({ success: true, response });
+                res.status(200).json({ success: true, response });
             } else {
-                res.json({ success: true, message: 'no orders found' })
+                res.status(204).json({ success: true, message: 'no orders found' })
             }
         } catch (error) {
             console.log(error);
-            res.status(412).json({ success: false, message: "error while retrieving order details" });
+            res.status(409).json({ success: false, message: "error while retrieving order details" });
         }
     })
 

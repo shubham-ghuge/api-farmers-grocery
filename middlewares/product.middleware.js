@@ -12,7 +12,7 @@ const getProductById = async (req, res, next, id) => {
         }
     } catch (error) {
         console.log(error)
-        res.status(412).json({ success: false, message: "could not retrieve product" });
+        res.status(409).json({ success: false, message: "could not retrieve product" });
     }
 }
 
