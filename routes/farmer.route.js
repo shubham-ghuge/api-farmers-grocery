@@ -34,8 +34,11 @@ router.route('/order')
                 const response = []
                 for (let i = 0; i < customers.length; i++) {
                     const data = await Order.findOne({ customerId: customers[i] }).populate('customerId products.productId').exec();
+                    data.customerId.password = undefined;
+                    data.customerId.__v = undefined;
                     response.push(data);
                 }
+                // response.customerId.password = undefined;
                 res.status(200).json({ success: true, response });
             } else {
                 res.status(204).json({ success: true, message: 'no orders found' })
