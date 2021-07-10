@@ -1,15 +1,21 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const Cart = require('../models/cart.model');
+const Wishlist = require('../models/wishlist.model');
 const salt = bcrypt.genSaltSync(8);
 
-const registerUser = async (req, res, model) => {
+const registerUser = async (req, res, model, user) => {
     const { name, email, password } = req.body;
     if (name && email && password) {
         try {
             const checkEmail = await model.findOne({ email })
             if (!checkEmail) {
                 const hashedPassword = bcrypt.hashSync(password, salt);
-                await model.create({ name, email, password: hashedPassword });
+                const response = await model.create({ name, email, password: hashedPassword });
+                if (user === 'Customer') {
+                    await Cart.create({ customerId: response._id });
+                    await Wishlist.create({ customerId: response._id });
+                }
                 res.status(201).json({ success: true, message: 'successfully registered' });
             }
             else {

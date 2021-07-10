@@ -7,29 +7,25 @@ router.route('/')
     .get(authHandler, isCustomer, async (req, res) => {
         const { userId } = req.user;
         try {
-            const response = await Wishlist.findOne({ customerId: userId }).populate('products').exec();
+            const response = await Wishlist.findOne({ customerId: userId });
             res.status(200).json({ success: true, response });
         } catch (error) {
             console.log(error);
             res.status(409).json({ success: false, message: "can't retrieve wishlist data" });
         }
-    })
+    });
+
+router.route('/:productId')
     .post(authHandler, isCustomer, async (req, res) => {
         const { userId } = req.user;
-        const { productId } = req.body;
+        const { productId } = req.params;
         try {
-            const isExistingUser = await Wishlist.findOne({ customerId: userId });
-            if (isExistingUser) {
-                const { products } = isExistingUser;
-                if (products.includes(productId)) {
-                    res.status(409).json({ success: true, message: "product already exist" });
-                } else {
-                    await Wishlist.findOneAndUpdate({ customerId: userId }, { $push: { products: productId } })
-                    res.status(201).json({ success: true, message: "product added in wishlist" });
-                }
+            const { products } = await Wishlist.findOne({ customerId: userId });
+            if (products.includes(productId)) {
+                res.status(409).json({ success: true, message: "product already exist" });
             } else {
-                await Wishlist.create({ customerId: userId, products: [productId] });
-                res.status(201).json({ success: true, message: "product added in wishlist" });
+                await Wishlist.findOneAndUpdate({ customerId: userId }, { $push: { products: productId } })
+                res.status(201).json({ success: true, message: "product added in wishlist", productId });
             }
         } catch (error) {
             console.log(error);
@@ -38,10 +34,10 @@ router.route('/')
     })
     .delete(authHandler, isCustomer, async (req, res) => {
         const { userId } = req.user;
-        const { productId } = req.body;
+        const { productId } = req.params;
         try {
             await Wishlist.findOneAndUpdate({ customerId: userId }, { $pull: { products: productId } });
-            res.status(201).json({ success: true, message: "product removed from wishlist"});
+            res.status(201).json({ success: true, message: "product removed from wishlist", productId });
         } catch (error) {
             console.log(error);
             res.status(409).json({ success: false, message: "can't remove data from wishlist" });

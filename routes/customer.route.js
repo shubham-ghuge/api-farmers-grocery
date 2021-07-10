@@ -7,7 +7,7 @@ const Address = require('../models/address.model');
 
 router.route('/register')
     .post(async (req, res) => {
-        registerUser(req, res, Customer);
+        registerUser(req, res, Customer,'Customer');
     })
 router.route('/login')
     .post(async (req, res) => {
