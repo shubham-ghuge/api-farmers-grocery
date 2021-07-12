@@ -38,7 +38,6 @@ router.route('/order')
                     data.customerId.__v = undefined;
                     response.push(data);
                 }
-                // response.customerId.password = undefined;
                 res.status(200).json({ success: true, response });
             } else {
                 res.status(204).json({ success: true, message: 'no orders found' })

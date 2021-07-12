@@ -6,7 +6,11 @@ const productOrderSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Product'
     },
-    quantity: Number
+    farmerId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Farmer'
+    },
+    quantity: { type: Number, default: 1 }
 })
 
 const orderSchema = new Schema({
@@ -15,6 +19,10 @@ const orderSchema = new Schema({
         ref: 'Customer'
     },
     products: [productOrderSchema],
+    addressId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Address'
+    }
 });
 const Order = mongoose.model('Order', orderSchema);
 module.exports = Order;

@@ -5,9 +5,9 @@ const { authHandler, isCustomer } = require('../middlewares/auth.middleware')
 
 router.route('/')
     .get(authHandler, isCustomer, async (req, res) => {
-        const { userId } = req.user;
+        const { wishlistId } = req.userData;
         try {
-            const response = await Wishlist.findOne({ customerId: userId });
+            const response = await Wishlist.findById(wishlistId);
             res.status(200).json({ success: true, response });
         } catch (error) {
             console.log(error);
@@ -17,14 +17,14 @@ router.route('/')
 
 router.route('/:productId')
     .post(authHandler, isCustomer, async (req, res) => {
-        const { userId } = req.user;
         const { productId } = req.params;
+        const { wishlistId } = req.userData;
         try {
-            const { products } = await Wishlist.findOne({ customerId: userId });
+            const { products } = await Wishlist.findById(wishlistId);
             if (products.includes(productId)) {
                 res.status(409).json({ success: true, message: "product already exist" });
             } else {
-                await Wishlist.findOneAndUpdate({ customerId: userId }, { $push: { products: productId } })
+                await Wishlist.findByIdAndUpdate(wishlistId, { $push: { products: productId } })
                 res.status(201).json({ success: true, message: "product added in wishlist", productId });
             }
         } catch (error) {
@@ -33,10 +33,10 @@ router.route('/:productId')
         }
     })
     .delete(authHandler, isCustomer, async (req, res) => {
-        const { userId } = req.user;
         const { productId } = req.params;
+        const { wishlistId } = req.userData;
         try {
-            await Wishlist.findOneAndUpdate({ customerId: userId }, { $pull: { products: productId } });
+            await Wishlist.findByIdAndUpdate(wishlistId, { $pull: { products: productId } });
             res.status(201).json({ success: true, message: "product removed from wishlist", productId });
         } catch (error) {
             console.log(error);

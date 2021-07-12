@@ -13,8 +13,9 @@ const registerUser = async (req, res, model, user) => {
                 const hashedPassword = bcrypt.hashSync(password, salt);
                 const response = await model.create({ name, email, password: hashedPassword });
                 if (user === 'Customer') {
-                    await Cart.create({ customerId: response._id });
-                    await Wishlist.create({ customerId: response._id });
+                    const cartRef = await Cart.create({ customerId: response._id });
+                    const wishlistRef = await Wishlist.create({ customerId: response._id });
+                    await model.findByIdAndUpdate(response._id, { cartId: cartRef._id, wishlistId: wishlistRef._id });
                 }
                 res.status(201).json({ success: true, message: 'successfully registered' });
             }
@@ -22,7 +23,6 @@ const registerUser = async (req, res, model, user) => {
                 res.json({ success: false, message: "email id already exist" })
             }
         }
-
         catch (error) {
             console.log(error);
             res.status(409).json({ success: false, message: 'error while registration in' });

@@ -33,6 +33,7 @@ const isCustomer = async (req, res, next) => {
     try {
         const checkCustomer = await Customer.findById(userId);
         if (checkCustomer) {
+            req.userData = checkCustomer;
             return next();
         }
         else {

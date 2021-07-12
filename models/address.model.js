@@ -7,7 +7,10 @@ const addressSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Customer'
     },
-    address: [String]
+    address: {
+        type: String
+    },
+    pincode: Number
 });
 const Address = mongoose.model('Address', addressSchema);
 module.exports = Address;

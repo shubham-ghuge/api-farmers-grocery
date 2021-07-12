@@ -5,9 +5,9 @@ const Cart = require('../models/cart.model');
 
 router.route('/')
     .get(authHandler, isCustomer, async (req, res) => {
-        const { userId } = req.user;
+        const { cartId } = req.userData;
         try {
-            const response = await Cart.findOne({ customerId: userId });
+            const response = await Cart.findById(cartId);
             res.status(200).json({ success: true, response });
         } catch (error) {
             console.log(error);
@@ -15,15 +15,17 @@ router.route('/')
         }
     })
     .post(authHandler, isCustomer, async (req, res) => {
+        const { cartId } = req.userData;
         const { userId } = req.user;
-        const { productDetails } = req.body;
+        const productDetails = req.body;
         try {
-            const isExistingProduct = await Cart.find({ products: { $elemMatch: { productId: productDetails.productId } } });
+            const { products } = await Cart.findById(cartId);
+            const isExistingProduct = products.filter(i => i.productId.toString() === productDetails.productId);
             if (isExistingProduct.length !== 0) {
                 await Cart.updateOne({ customerId: userId, products: { $elemMatch: { productId: productDetails.productId } } }, { $set: { "products.$.quantity": productDetails.quantity } });
                 res.status(201).json({ success: true, message: "quantity updated", productDetails });
             } else {
-                await Cart.findOneAndUpdate({ customerId: userId }, { $push: { products: productDetails } });
+                await Cart.findByIdAndUpdate(cartId, { $push: { products: productDetails } });
                 res.status(201).json({ success: true, message: "product added to cart", productDetails });
             }
         } catch (error) {
@@ -34,10 +36,10 @@ router.route('/')
 
 router.route('/:productId')
     .delete(authHandler, isCustomer, async (req, res) => {
-        const { userId } = req.user;
+        const { cartId } = req.userData;
         const { productId } = req.params;
         try {
-            await Cart.findOneAndUpdate({ customerId: userId }, { $pull: { products: { productId } } }).exec();
+            await Cart.findByIdAndUpdate(cartId, { $pull: { products: { productId } } }).exec();
             res.status(201).json({ success: true, message: "product removed from cart", productId });
         } catch (error) {
             console.log(error);

@@ -1,8 +1,8 @@
 {
   "name": "api-farmers-grocery",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -6,6 +6,10 @@ const productsInCart = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Product'
     },
+    farmerId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Farmer'
+    },
     quantity: { type: Number, default: 1 }
 });
 
