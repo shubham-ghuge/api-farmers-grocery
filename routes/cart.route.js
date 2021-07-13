@@ -22,7 +22,8 @@ router.route('/')
             const { products } = await Cart.findById(cartId);
             const isExistingProduct = products.filter(i => i.productId.toString() === productDetails.productId);
             if (isExistingProduct.length !== 0) {
-                await Cart.updateOne({ customerId: userId, products: { $elemMatch: { productId: productDetails.productId } } }, { $set: { "products.$.quantity": productDetails.quantity } });
+                const data = await Cart.updateOne({ customerId: userId, products: { $elemMatch: { productId: productDetails.productId } } }, { $set: { "products.$.quantity": productDetails.quantity } });
+                console.log(data);
                 res.status(201).json({ success: true, message: "quantity updated", productDetails });
             } else {
                 await Cart.findByIdAndUpdate(cartId, { $push: { products: productDetails } });

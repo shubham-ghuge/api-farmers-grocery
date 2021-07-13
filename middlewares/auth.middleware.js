@@ -18,6 +18,7 @@ const isFarmer = async (req, res, next) => {
     try {
         const checkfarmer = await Farmer.findById(userId);
         if (checkfarmer) {
+            req.userData = checkfarmer;
             return next();
         } else {
             res.status(401).json({ success: false, message: "unauthorized access" });
