@@ -11,6 +11,7 @@ const orderRoute = require('./routes/order.route');
 const cartRoute = require('./routes/cart.route');
 const wishlistRoute = require('./routes/wishlist.route');
 const addressRoute = require('./routes/address.route');
+const paymentRoute = require('./routes/payment.route');
 
 require('dotenv').config();
 
@@ -26,6 +27,7 @@ app.use('/orders', orderRoute);
 app.use('/cart', cartRoute);
 app.use('/wishlist', wishlistRoute);
 app.use('/address', addressRoute);
+app.use('/payments', paymentRoute);
 
 app.get('/', (req, res) => {
   res.status(200).json({ 'Hello From Farmers Grocery!': 'API' })

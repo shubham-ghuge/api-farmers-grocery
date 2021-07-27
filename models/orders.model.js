@@ -22,7 +22,11 @@ const orderSchema = new Schema({
     addressId: {
         type: Schema.Types.ObjectId,
         ref: 'Address'
-    }
+    },
+    deliveryStatus: false,
+    paymentStatus: false,
+    cashOnDelivery: false
 });
+
 const Order = mongoose.model('Order', orderSchema);
 module.exports = Order;
