@@ -27,9 +27,9 @@ router.route('/')
         const { addressId } = req.body;
         try {
             const { products } = await Cart.findById(cartId);
-            const response = await Order.create({ customerId: _id, products, addressId, paymentStatus:true, deliveryStatus: false });
-            await Customer.findByIdAndUpdate(_id, { $push: { orders: response._id } }); 
-            const farmerIds = new Set(products.map(i => i.farmerId));
+            const response = await Order.create({ customerId: _id, products, addressId, paymentStatus: true, deliveryStatus: false });
+            await Customer.findByIdAndUpdate(_id, { $push: { orders: response._id } });
+            const farmerIds = new Set(products.map(i => i.farmerId.toString()));
             farmerIds.forEach(async (i) => {
                 await Farmer.findByIdAndUpdate(i, { $push: { orders: response._id } })
             });

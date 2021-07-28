@@ -40,7 +40,7 @@ router.route('/category')
   .post(authHandler, isFarmer, async (req, res) => {
     const { name } = req.body;
     try {
-      const response = await Category.create({ name });
+      await Category.create({ name });
       res.status(201).json({ success: true, message: "category added" });
     } catch (error) {
       console.log(error);
@@ -60,7 +60,7 @@ router.route('/:productId')
     let { product } = req; /* coming from middleware  */
     try {
       product = extend(product, updatedProduct);
-      const response = await product.save()
+      const response = await product.save();
       res.status(201).json({ success: true, message: "product updated", response });
     } catch (error) {
       console.log(error);

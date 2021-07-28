@@ -29,7 +29,9 @@ const farmerSchema = new Schema({
     orders: [{
         type: Schema.Types.ObjectId,
         ref: 'Order'
-    }]
+    }],
+    wallet: Number,
+    certificates: [String]
 });
 const Farmer = mongoose.model('Farmer', farmerSchema);
 module.exports = Farmer;
